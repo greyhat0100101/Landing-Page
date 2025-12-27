@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Analytics Dashboard | Zentrix</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Babylon.js (CDN) -->
+  <script src="https://cdn.babylonjs.com/babylon.js"></script>
+  <script src="https://cdn.babylonjs.com/materialsLibrary/babylon.gridMaterial.min.js"></script>
+
+  <!-- Chart.js for analytics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Main stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+  
+  <style>
+    .analytics-header {
+      padding: 40px 0 20px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      margin-bottom: 40px;
+    }
+
+    .analytics-title {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #00e5ff, #00a8cc, #00e5ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .analytics-subtitle {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .stat-card {
+      background: rgba(8,10,14,.62);
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 12px 40px rgba(0,0,0,.35);
+      transition: all .3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(0,229,255,.05), transparent);
+      pointer-events: none;
+    }
+
+    .stat-card:hover {
+      border-color: rgba(0,229,255,.35);
+      box-shadow: 0 20px 50px rgba(0,229,255,.1);
+      transform: translateY(-4px);
+    }
+
+    .stat-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .stat-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: rgba(0,229,255,.1);
+      border: 1px solid rgba(0,229,255,.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: var(--accent);
+    }
+
+    .stat-title {
+      font-size: 13px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .4px;
+      font-weight: 600;
+    }
+
+    .stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .stat-change {
+      font-size: 12px;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .stat-change.negative {
+      color: #ff6b6b;
+    }
+
+    .charts-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+
+    .chart-card {
+      background: rgba(8,10,14,.62);
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 18px;
+      padding: 28px;
+      box-shadow: 0 12px 40px rgba(0,0,0,.35);
+      transition: all .3s ease;
+    }
+
+    .chart-card:hover {
+      border-color: rgba(0,229,255,.35);
+      box-shadow: 0 20px 50px rgba(0,229,255,.1);
+    }
+
+    .chart-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .chart-wrapper {
+      position: relative;
+      height: 300px;
+    }
+
+    .table-card {
+      background: rgba(8,10,14,.62);
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 18px;
+      padding: 28px;
+      box-shadow: 0 12px 40px rgba(0,0,0,.35);
+      overflow-x: auto;
+    }
+
+    .table-card table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .table-card thead {
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+
+    .table-card th {
+      padding: 12px;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .4px;
+    }
+
+    .table-card td {
+      padding: 12px;
+      border-top: 1px solid rgba(255,255,255,.04);
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    .table-card tr:hover {
+      background: rgba(0,229,255,.05);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      background: rgba(0,229,255,.15);
+      color: var(--accent);
+      border: 1px solid rgba(0,229,255,.25);
+    }
+
+    .badge.secondary {
+      background: rgba(255,255,255,.08);
+      color: var(--text);
+      border-color: rgba(255,255,255,.15);
+    }
+
+    .top-countries {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .country-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,.04);
+    }
+
+    .country-item:last-child {
+      border-bottom: none;
+    }
+
+    .country-name {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .country-flag {
+      font-size: 18px;
+    }
+
+    .country-count {
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 4px;
+      background: rgba(255,255,255,.08);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #00e5ff, #00a8cc);
+      border-radius: 2px;
+      transition: width .3s ease;
+    }
+
+    .back-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 30px;
+      padding: 10px 16px;
+      border-radius: 10px;
+      border: 1px solid rgba(0,229,255,.35);
+      background: rgba(0,229,255,.08);
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 13px;
+      transition: all .2s ease;
+    }
+
+    .back-button:hover {
+      background: rgba(0,229,255,.12);
+      border-color: rgba(0,229,255,.55);
+    }
+
+    .loading-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted);
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      margin: 20px auto;
+      border: 2px solid rgba(0,229,255,.2);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .error-state {
+      background: rgba(255,107,107,.1);
+      border: 1px solid rgba(255,107,107,.3);
+      border-radius: 12px;
+      padding: 20px;
+      color: #ff8787;
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    @media (max-width: 768px) {
+      .analytics-title {
+        font-size: 24px;
+      }
+
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .charts-container {
+        grid-template-columns: 1fr;
+      }
+
+      .chart-wrapper {
+        height: 250px;
+      }
+
+      .table-card {
+        font-size: 12px;
+      }
+
+      .table-card th,
+      .table-card td {
+        padding: 8px;
+        font-size: 11px;
+      }
+    }
+  </style>
+</head>
+<body>
+    <canvas id="renderCanvas"></canvas>
+    <div class="veil"></div>
+
+    <div class="topbar">
+      <div class="inner container">
+        <button class="hamburger" id="hamburgerBtn" aria-label="Toggle navigation menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <div class="brand">
+          <div class="brandLogoText">Zentrix</div>
+          <div class="name">
+            <strong class="brandGlow">Analytics</strong>
+          </div>
+        </div>
+
+        <div class="nav-right" id="navMenu">
+          <div class="nav" aria-label="Primary navigation">
+            <a href="/">Home</a>
+            <a href="/">Back to Site</a>
+          </div>
+
+          <a class="btn btnLogin" href="/">
+            Exit Analytics
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Analytics Content -->
+    <div class="container" style="padding-top: 40px; padding-bottom: 60px; position: relative; z-index: 1;">
+      <a href="/" class="back-button">← Back to Home</a>
+
+      <div class="analytics-header">
+        <div class="analytics-title">📊 Platform Analytics</div>
+        <div class="analytics-subtitle">Real-time visitor tracking and platform insights</div>
+      </div>
+
+      <!-- Loading State -->
+      <div id="loadingState" class="loading-state" style="display: none;">
+        <div class="spinner"></div>
+        <p>Loading analytics data...</p>
+      </div>
+
+      <!-- Error State -->
+      <div id="errorState" class="error-state" style="display: none;"></div>
+
+      <!-- Dashboard Grid -->
+      <div class="dashboard-grid">
+        <div class="stat-card">
+          <div class="stat-header">
+            <div class="stat-icon">👥</div>
+            <div class="stat-title">Total Visitors</div>
+          </div>
+          <div class="stat-value" id="totalVisitors">0</div>
+          <div class="stat-change" id="visitorsChange">
+            <span>↑ +0%</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-header">
+            <div class="stat-icon">🌍</div>
+            <div class="stat-title">Countries</div>
+          </div>
+          <div class="stat-value" id="totalCountries">0</div>
+          <div class="stat-change">
+            <span id="countriesText">0 unique countries</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-header">
+            <div class="stat-icon">💻</div>
+            <div class="stat-title">Unique Devices</div>
+          </div>
+          <div class="stat-value" id="uniqueDevices">0</div>
+          <div class="stat-change">
+            <span id="devicesText">0 device types</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-header">
+            <div class="stat-icon">🌐</div>
+            <div class="stat-title">Top Browser</div>
+          </div>
+          <div class="stat-value" id="topBrowser">-</div>
+          <div class="stat-change">
+            <span id="browserCount">-</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Section -->
+      <div class="charts-container">
+        <div class="chart-card">
+          <div class="chart-title">📱 Devices Distribution</div>
+          <div class="chart-wrapper">
+            <canvas id="deviceChart"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-title">🌐 Browsers Used</div>
+          <div class="chart-wrapper">
+            <canvas id="browserChart"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-title">💾 Operating Systems</div>
+          <div class="chart-wrapper">
+            <canvas id="osChart"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-title">📊 Visitors Over Time</div>
+          <div class="chart-wrapper">
+            <canvas id="timelineChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top Countries Table -->
+      <div class="table-card">
+        <h2 style="margin-bottom: 20px; color: var(--text); font-size: 16px;">🌍 Top Countries</h2>
+        <div id="countriesContainer" class="top-countries">
+          <p style="color: var(--muted);">Loading countries data...</p>
+        </div>
+      </div>
+
+      <!-- Recent Visitors Table -->
+      <div class="table-card" style="margin-top: 24px;">
+        <h2 style="margin-bottom: 20px; color: var(--text); font-size: 16px;">👥 Recent Visitors</h2>
+        <table id="visitorsTable" style="display: none;">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Country</th>
+              <th>Device</th>
+              <th>Browser</th>
+              <th>OS</th>
+            </tr>
+          </thead>
+          <tbody id="visitorsTableBody"></tbody>
+        </table>
+        <div id="noVisitors" style="text-align: center; padding: 40px; color: var(--muted);">
+          No visitor data available yet
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/main.js"></script>
+    <script>
+      let deviceChart, browserChart, osChart, timelineChart;
+      let statsData = {
+        total: 0,
+        byCountry: {},
+        byDevice: {},
+        byBrowser: {},
+        byOS: {},
+        recent: []
+      };
+
+      async function loadAnalytics() {
+        const loadingState = document.getElementById('loadingState');
+        const errorState = document.getElementById('errorState');
+
+        loadingState.style.display = 'block';
+        errorState.style.display = 'none';
+
+        try {
+          const response = await fetch('/api/visitor-stats');
+          if (!response.ok) throw new Error('Failed to fetch visitor stats');
+
+          let data = await response.json();
+          
+          // Ensure data is an array
+          if (!Array.isArray(data)) {
+            throw new Error('Invalid data format received from server');
+          }
+
+          loadingState.style.display = 'none';
+
+          if (data.length === 0) {
+            errorState.style.display = 'block';
+            errorState.textContent = '📭 No visitor data available yet. Start sharing your platform!';
+            return;
+          }
+
+          processData(data);
+          renderStats(data);
+          renderCharts(data);
+          renderTables(data);
+        } catch (error) {
+          loadingState.style.display = 'none';
+          errorState.style.display = 'block';
+          errorState.textContent = '⚠️ Error loading analytics: ' + error.message;
+          console.error('Analytics error:', error);
+        }
+      }
+
+      function processData(visitors) {
+        statsData.total = visitors.length;
+        statsData.recent = visitors.slice(0, 20);
+
+        const countryMap = {};
+        const deviceMap = {};
+        const browserMap = {};
+        const osMap = {};
+        const timelineMap = {};
+
+        visitors.forEach(visitor => {
+          // Countries
+          countryMap[visitor.country || 'Unknown'] = (countryMap[visitor.country || 'Unknown'] || 0) + 1;
+
+          // Devices
+          deviceMap[visitor.device || 'Unknown'] = (deviceMap[visitor.device || 'Unknown'] || 0) + 1;
+
+          // Browsers
+          browserMap[visitor.browser || 'Unknown'] = (browserMap[visitor.browser || 'Unknown'] || 0) + 1;
+
+          // OS
+          osMap[visitor.os || 'Unknown'] = (osMap[visitor.os || 'Unknown'] || 0) + 1;
+
+          // Timeline (by date)
+          const date = new Date(visitor.timestamp).toLocaleDateString();
+          timelineMap[date] = (timelineMap[date] || 0) + 1;
+        });
+
+        statsData.byCountry = countryMap;
+        statsData.byDevice = deviceMap;
+        statsData.byBrowser = browserMap;
+        statsData.byOS = osMap;
+        statsData.timeline = timelineMap;
+      }
+
+      function renderStats(visitors) {
+        document.getElementById('totalVisitors').textContent = visitors.length;
+        
+        const countries = Object.keys(statsData.byCountry).length;
+        document.getElementById('totalCountries').textContent = countries;
+        document.getElementById('countriesText').textContent = `${countries} unique countries`;
+
+        const devices = Object.keys(statsData.byDevice).length;
+        document.getElementById('uniqueDevices').textContent = devices;
+        document.getElementById('devicesText').textContent = `${devices} device types`;
+
+        const topBrowser = Object.keys(statsData.byBrowser).reduce((a, b) =>
+          statsData.byBrowser[a] > statsData.byBrowser[b] ? a : b, 'None');
+        const browserCount = statsData.byBrowser[topBrowser] || 0;
+        document.getElementById('topBrowser').textContent = topBrowser;
+        document.getElementById('browserCount').textContent = `${browserCount} users`;
+      }
+
+      function renderCharts(visitors) {
+        // Destroy existing charts if they exist
+        if (deviceChart) deviceChart.destroy();
+        if (browserChart) browserChart.destroy();
+        if (osChart) osChart.destroy();
+        if (timelineChart) timelineChart.destroy();
+
+        const chartColor = '#00e5ff';
+        const chartBgColor = 'rgba(0, 229, 255, 0.1)';
+
+        // Device Chart
+        const deviceCtx = document.getElementById('deviceChart').getContext('2d');
+        const sortedDevices = Object.entries(statsData.byDevice).sort((a, b) => b[1] - a[1]);
+        deviceChart = new Chart(deviceCtx, {
+          type: 'doughnut',
+          data: {
+            labels: sortedDevices.map(d => d[0]),
+            datasets: [{
+              data: sortedDevices.map(d => d[1]),
+              backgroundColor: [
+                'rgba(0, 229, 255, 0.8)',
+                'rgba(0, 168, 204, 0.8)',
+                'rgba(0, 120, 150, 0.8)',
+                'rgba(0, 100, 120, 0.8)'
+              ],
+              borderColor: 'rgba(8, 10, 14, 0.62)',
+              borderWidth: 2
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { labels: { color: 'rgba(255,255,255,0.72)' } } }
+          }
+        });
+
+        // Browser Chart
+        const browserCtx = document.getElementById('browserChart').getContext('2d');
+        const sortedBrowsers = Object.entries(statsData.byBrowser).sort((a, b) => b[1] - a[1]);
+        browserChart = new Chart(browserCtx, {
+          type: 'bar',
+          data: {
+            labels: sortedBrowsers.map(b => b[0]),
+            datasets: [{
+              label: 'Users',
+              data: sortedBrowsers.map(b => b[1]),
+              backgroundColor: 'rgba(0, 229, 255, 0.3)',
+              borderColor: chartColor,
+              borderWidth: 1
+            }]
+          },
+          options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { labels: { color: 'rgba(255,255,255,0.72)' } } },
+            scales: {
+              x: { ticks: { color: 'rgba(255,255,255,0.72)' }, grid: { color: 'rgba(255,255,255,0.08)' } },
+              y: { ticks: { color: 'rgba(255,255,255,0.72)' }, grid: { color: 'rgba(255,255,255,0.08)' } }
+            }
+          }
+        });
+
+        // OS Chart
+        const osCtx = document.getElementById('osChart').getContext('2d');
+        const sortedOS = Object.entries(statsData.byOS).sort((a, b) => b[1] - a[1]);
+        osChart = new Chart(osCtx, {
+          type: 'bar',
+          data: {
+            labels: sortedOS.map(o => o[0]),
+            datasets: [{
+              label: 'Users',
+              data: sortedOS.map(o => o[1]),
+              backgroundColor: 'rgba(0, 168, 204, 0.3)',
+              borderColor: 'rgba(0, 168, 204, 1)',
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { labels: { color: 'rgba(255,255,255,0.72)' } } },
+            scales: {
+              y: { ticks: { color: 'rgba(255,255,255,0.72)' }, grid: { color: 'rgba(255,255,255,0.08)' } },
+              x: { ticks: { color: 'rgba(255,255,255,0.72)' }, grid: { color: 'rgba(255,255,255,0.08)' } }
+            }
+          }
+        });
+
+        // Timeline Chart
+        const timelineCtx = document.getElementById('timelineChart').getContext('2d');
+        const sortedDates = Object.entries(statsData.timeline).sort();
+        timelineChart = new Chart(timelineCtx, {
+          type: 'line',
+          data: {
+            labels: sortedDates.map(d => d[0]),
+            datasets: [{
+              label: 'Visitors',
+              data: sortedDates.map(d => d[1]),
+              borderColor: chartColor,
+              backgroundColor: chartBgColor,
+              fill: true,
+              tension: 0.4,
+              pointBackgroundColor: chartColor,
+              pointBorderColor: '#05070a',
+              pointBorderWidth: 2
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { labels: { color: 'rgba(255,255,255,0.72)' } } },
+            scales: {
+              y: { ticks: { color: 'rgba(255,255,255,0.72)' }, grid: { color: 'rgba(255,255,255,0.08)' } },
+              x: { ticks: { color: 'rgba(255,255,255,0.72)' }, grid: { color: 'rgba(255,255,255,0.08)' } }
+            }
+          }
+        });
+      }
+
+      function renderTables(visitors) {
+        // Countries
+        const countriesContainer = document.getElementById('countriesContainer');
+        const sortedCountries = Object.entries(statsData.byCountry).sort((a, b) => b[1] - a[1]).slice(0, 10);
+        const maxCount = sortedCountries[0]?.[1] || 1;
+
+        countriesContainer.innerHTML = sortedCountries.map(([country, count]) => `
+          <div class="country-item">
+            <div class="country-name">
+              <span class="country-flag">${getCountryFlag(country)}</span>
+              <span>${country}</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: ${(count / maxCount) * 100}%"></div>
+              </div>
+              <span class="country-count">${count}</span>
+            </div>
+          </div>
+        `).join('');
+
+        // Visitors Table
+        if (visitors.length > 0) {
+          document.getElementById('visitorsTable').style.display = 'table';
+          document.getElementById('noVisitors').style.display = 'none';
+          document.getElementById('visitorsTableBody').innerHTML = visitors.slice(0, 10).map(v => `
+            <tr>
+              <td>${new Date(v.timestamp).toLocaleString()}</td>
+              <td><span class="badge">${v.country || 'Unknown'}</span></td>
+              <td>${v.device || 'Unknown'}</td>
+              <td>${v.browser || 'Unknown'}</td>
+              <td>${v.os || 'Unknown'}</td>
+            </tr>
+          `).join('');
+        }
+      }
+
+      function getCountryFlag(country) {
+        const flags = {
+          'United States': '🇺🇸',
+          'Canada': '🇨🇦',
+          'Mexico': '🇲🇽',
+          'United Kingdom': '🇬🇧',
+          'Germany': '🇩🇪',
+          'France': '🇫🇷',
+          'Spain': '🇪🇸',
+          'Italy': '🇮🇹',
+          'Japan': '🇯🇵',
+          'China': '🇨🇳',
+          'India': '🇮🇳',
+          'Brazil': '🇧🇷',
+          'Australia': '🇦🇺'
+        };
+        return flags[country] || '🌍';
+      }
+
+      // Load analytics on page load
+      window.addEventListener('DOMContentLoaded', loadAnalytics);
+
+      // Refresh every 30 seconds
+      setInterval(loadAnalytics, 30000);
+    </script>
+</body>
+</html>

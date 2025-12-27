@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Modern Futuristic Platform | Jorge Ramos</title>
+  <!--
+    This HTML document defines a responsive, modern landing page for the
+    “Modern Futuristic Platform” built by Jorge Ramos.  The design
+    emphasizes a futuristic aesthetic with animated gradients and a
+    Babylon.js powered background.  CSS variables centralize colors and
+    sizing for easy theming, and media queries are used to adapt the
+    layout and typography for different screen sizes.  On mobile, only
+    the most important text is displayed using line‑clamping to keep
+    the interface clean and readable.
+  -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Babylon.js (CDN) -->
+  <script src="https://cdn.babylonjs.com/babylon.js"></script>
+  <script src="https://cdn.babylonjs.com/materialsLibrary/babylon.gridMaterial.min.js"></script>
+
+  <!-- Main stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <canvas id="renderCanvas"></canvas>
+    <div class="veil"></div>
+
+    <div class="topbar">
+      <div class="inner container">
+        <button class="hamburger" id="hamburgerBtn" aria-label="Toggle navigation menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <div class="brand">
+          <!-- Logo text animado reemplazando la imagen -->
+          <div class="brandLogoText">Zentrix</div>
+          <div class="name">
+            <strong class="brandGlow">From Idea to Reality</strong>
+          </div>
+        </div>
+
+        <div class="nav-right" id="navMenu">
+          <div class="nav" aria-label="Primary navigation">
+            <a href="#about">About</a>
+            <a href="#offers">Offers</a>
+            <a href="#why">Why Us</a>
+          </div>
+
+          <!-- Dropdown menu replacing the Services button -->
+          <details class="dropdown" aria-label="Services menu">
+            <summary>
+              <span>Services</span>
+              <span class="arrow">▼</span>
+            </summary>
+            <ul class="dropdown-menu">
+              <li class="menu-heading">General</li>
+              <li><a href="#register">Register</a></li>
+              <li><a href="#schedules">Schedules</a></li>
+              <li class="menu-heading">Departments</li>
+              <li><a href="#mobile-oil-change">Oil Change</a></li>
+              <li><a href="#furniture-assembly">Furniture</a></li>
+              <li><a href="#computer-repair">Computer Repair</a></li>
+              <li><a href="#app-software-development">App Dev</a></li>
+              <li><a href="#house-painting">Painting</a></li>
+              <li><a href="#epoxy-floors">Epoxy Floors</a></li>
+              <li><a href="#epoxy-tables">Epoxy Tables</a></li>
+              <li><a href="#ai-mentor">AI Mentor</a></li>
+              <li><a href="#build-website-like-this">Web Design</a></li>
+              <li><a href="#music-recording">Music Rec.</a></li>
+              <li><a href="#ui-startup-ideas">UI Ideas</a></li>
+              <li><a href="#mobile-car-wash">Car Wash</a></li>
+              <li><a href="#custom-pc-tools">PC Tools</a></li>
+            </ul>
+          </details>
+
+          <!-- Login Button -->
+          <button class="btn btnLogin" id="loginBtn" aria-label="Login">
+            Log In
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- HERO -->
+    <section class="hero" id="top">
+      <div class="container heroGrid">
+        <div class="heroCard">
+
+          <!-- Hero branding -->
+          <div class="heroBrand">
+            <img src="https://res.cloudinary.com/dsu6g9dym/image/upload/v1765086237/expenses/profiles/kavejaiepdxwe1meu1wc.jpg" alt="Jorge Ramos" class="heroBrandImg" style="width:44px; height:44px; border-radius:12px; object-fit:cover;">
+            <div>
+              <strong class="brandGlow" style="font-size:18px; letter-spacing:.6px;">
+                Jorge Ramos
+              </strong>
+              <div style="font-size:12px; color:var(--muted);">
+                Modern Futuristic Platform
+              </div>
+            </div>
+          </div>
+
+          <div class="tag">⚡ Modern • Futuristic • Multi-Department</div>
+
+          <h1>Solutions built from real‑world experience.</h1>
+
+          <p>
+            A single platform that combines hands‑on field work and modern software engineering.
+            Every department exists because it's backed by proven skills and real execution.
+          </p>
+
+          <div class="heroActions">
+            <a class="btn btnPrimary" href="#offers">View What We Offer</a>
+            <a class="btn" href="#about">About Jorge Ramos</a>
+          </div>
+        </div>
+
+        <div class="statsCard" aria-label="Platform highlights">
+          <div class="statRow">
+            <div>
+              <strong>One platform, multiple disciplines</strong>
+              <div><span>From physical services to full software builds</span></div>
+            </div>
+            <div class="badge">Multi‑Dept</div>
+          </div>
+
+          <div class="statRow">
+            <div>
+              <strong>Real experience, not theory</strong>
+              <div><span>Everything here is done, tested, delivered</span></div>
+            </div>
+            <div class="badge">Proven</div>
+          </div>
+
+          <div class="statRow">
+            <div>
+              <strong>Future‑ready tools</strong>
+              <div><span>Modern stack + AI mentoring</span></div>
+            </div>
+            <div class="badge">Next‑Gen</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT + WHY -->
+    <section id="about">
+      <div class="container split">
+        <div class="panel">
+          <h2>About Jorge Ramos</h2>
+          <p class="lead">
+            I'm Jorge Ramos, the creator and owner of this multi‑department platform.
+            <br><br>
+            This website was built with a clear purpose:
+            Everything you see here is based on real experience and proven knowledge.
+            <br><br>
+            Every service, tool, and department exists because I've done it before, worked in the field, or I'm certified in it.
+            <br><br>
+            This is not a random collection of services.
+            This is my knowledge, my skills, and my real‑world experience turned into solutions.
+            <br><br>
+            If it's here, it's because I know it, I've done it, and I can build it.
+          </p>
+        </div>
+
+        <div class="panel" id="why">
+          <h2>Why This Platform?</h2>
+          <p class="lead">
+            This platform exists to build, teach, and solve.
+          </p>
+
+          <div class="list" role="list">
+            <div class="li" role="listitem">
+              <div class="dot" aria-hidden="true"></div>
+              <div>
+                <b>Real experience, not theory</b>
+                <p>Everything offered here is grounded in hands‑on work and delivery.</p>
+              </div>
+            </div>
+
+            <div class="li" role="listitem">
+              <div class="dot" aria-hidden="true"></div>
+              <div>
+                <b>One person, multiple disciplines</b>
+                <p>Physical services + software engineering + AI mentoring in one ecosystem.</p>
+              </div>
+            </div>
+
+            <div class="li" role="listitem">
+              <div class="dot" aria-hidden="true"></div>
+              <div>
+                <b>Modern tools, future‑ready solutions</b>
+                <p>Clean builds, scalable designs, and practical AI workflows.</p>
+              </div>
+            </div>
+
+            <div class="li" role="listitem">
+              <div class="dot" aria-hidden="true"></div>
+              <div>
+                <b>Full transparency and ownership</b>
+                <p>If we build software, you can receive full code, repos, or deployments.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- OFFERS -->
+    <section id="offers">
+      <div class="container">
+        <div class="offersHeader">
+          <div>
+            <h2>What We Offer</h2>
+            <p class="lead">A multi‑department lineup designed to deliver real outcomes.</p>
+          </div>
+          <div class="meta">Modern services • Clean delivery • Future‑ready builds</div>
+        </div>
+
+        <div class="grid" aria-label="Services grid">
+
+          <div class="offer" id="mobile-oil-change">
+            <div class="offerTop">
+              <div class="offerNum">01</div>
+              <div class="badge">On‑site</div>
+            </div>
+            <h3>MOBILE VEHICLE OIL CHANGE</h3>
+            <p>Professional oil change service delivered directly to your location.</p>
+          </div>
+
+          <div class="offer" id="furniture-assembly">
+            <div class="offerTop">
+              <div class="offerNum">02</div>
+              <div class="badge">Home/Office</div>
+            </div>
+            <h3>FURNITURE ASSEMBLY</h3>
+            <p>Fast, clean, and reliable furniture assembly for home or office.</p>
+          </div>
+
+          <div class="offer" id="computer-repair">
+            <div class="offerTop">
+              <div class="offerNum">03</div>
+              <div class="badge">Diagnostics</div>
+            </div>
+            <h3>COMPUTER REPAIR</h3>
+            <p>Hardware and software repair, diagnostics, optimization, and upgrades.</p>
+          </div>
+
+          <div class="offer" id="app-software-development">
+            <div class="offerTop">
+              <div class="offerNum">04</div>
+              <div class="badge">Dev</div>
+            </div>
+            <h3>APP &amp; SOFTWARE DEVELOPMENT</h3>
+            <p>From fast visual builds to full custom code you own 100%.</p>
+            <div class="mini">
+              <span><b>Low‑code / Visual coding:</b> rapid web platforms</span>
+              <span><b>Full code (no builders):</b> custom apps &amp; systems</span>
+              <span><b>Delivery:</b> GitHub • Local install • Cloud (Render/VPS)</span>
+              <span><b>Tech:</b> Node.js • HTML • CSS • JavaScript • Python</span>
+            </div>
+          </div>
+
+          <div class="offer" id="house-painting">
+            <div class="offerTop">
+              <div class="offerNum">05</div>
+              <div class="badge">Clean finish</div>
+            </div>
+            <h3>HOUSE PAINTING</h3>
+            <p>Interior and exterior painting with modern techniques and clean finishes.</p>
+          </div>
+
+          <div class="offer" id="epoxy-floors">
+            <div class="offerTop">
+              <div class="offerNum">06</div>
+              <div class="badge">Durable</div>
+            </div>
+            <h3>EPOXY FLOORS</h3>
+            <p>High‑quality epoxy flooring for garages, homes, and commercial spaces.</p>
+          </div>
+
+          <div class="offer" id="epoxy-tables">
+            <div class="offerTop">
+              <div class="offerNum">07</div>
+              <div class="badge">Custom</div>
+            </div>
+            <h3>EPOXY TABLES</h3>
+            <p>Custom epoxy tables with unique designs and durable materials.</p>
+          </div>
+
+          <div class="offer" id="ai-mentor">
+            <div class="offerTop">
+              <div class="offerNum">08</div>
+              <div class="badge">Mentor</div>
+            </div>
+            <h3>AI TEACHER &amp; MENTOR</h3>
+            <p>Learn practical AI to upgrade daily life, workflows, hobbies, and projects.</p>
+            <div class="mini">
+              <span>Build AI‑powered apps</span>
+              <span>Visual (no‑code) solutions</span>
+              <span>Local development on your computer (files/servers)</span>
+              <span><b>Tech:</b> Node.js • HTML • Python</span>
+            </div>
+          </div>
+
+          <div class="offer" id="build-website-like-this">
+            <div class="offerTop">
+              <div class="offerNum">09</div>
+              <div class="badge">Web</div>
+            </div>
+            <h3>BUILD A WEBSITE LIKE THIS ONE</h3>
+            <p>Modern, scalable websites built specifically for your needs.</p>
+          </div>
+
+          <div class="offer" id="music-recording">
+            <div class="offerTop">
+              <div class="offerNum">10</div>
+              <div class="badge">Studio</div>
+            </div>
+            <h3>MUSIC RECORDING SESSIONS</h3>
+            <p>Professional recording sessions for music, vocals, and audio projects.</p>
+          </div>
+
+          <div class="offer" id="ui-startup-ideas">
+            <div class="offerTop">
+              <div class="offerNum">11</div>
+              <div class="badge">UI only</div>
+            </div>
+            <h3>UI / WEBSITE STARTUP IDEAS</h3>
+            <p>Interface and design creation only.  No backend logic included.</p>
+            <div class="mini">
+              <span>Delivered in HTML • JSX • Python‑based UI frameworks • more</span>
+              <span>Perfect for validation or pitching ideas</span>
+            </div>
+          </div>
+
+          <div class="offer" id="mobile-car-wash">
+            <div class="offerTop">
+              <div class="offerNum">12</div>
+              <div class="badge">On‑demand</div>
+            </div>
+            <h3>MOBILE CAR WASH</h3>
+            <p>On‑demand mobile car wash service at your location.</p>
+          </div>
+
+          <div class="offer" id="custom-pc-tools">
+            <div class="offerTop">
+              <div class="offerNum">13</div>
+              <div class="badge">Automation</div>
+            </div>
+            <h3>CUSTOM PC TOOLS &amp; AUTOMATION</h3>
+            <p>Custom‑built software tools for your specific needs.</p>
+            <div class="mini">
+              <span>PDF editors • Image editors • Camera software</span>
+              <span>Network scanners • Task automation • and more</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <section class="footer">
+      <div class="container">
+        <div class="footerBox">
+          <div>
+            <strong style="display:block; margin-bottom:6px; letter-spacing:.2px;">
+              This platform exists to build, teach, and solve.
+            </strong>
+            <small>© 2025 — Jorge Ramos • Modern Futuristic Platform</small>
+          </div>
+          <a class="cta" href="#top">Back to top ↑</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main script -->
+    <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,1002 @@
+/*
+  CSS variables define a consistent colour palette, shadows and
+  sizing throughout the site.  Adjust these values to quickly
+  change the look and feel of the entire layout.
+*/
+:root{
+  --bg:#05070a;
+  --panel:rgba(8,10,14,.78);
+  --panel2:rgba(255,255,255,.06);
+  --border:rgba(255,255,255,.08);
+  --text:rgba(255,255,255,.92);
+  --muted:rgba(255,255,255,.72);
+  --accent:#00e5ff;
+
+  --radius:18px;
+  --shadow: 0 12px 40px rgba(0,0,0,.35);
+
+  --container: min(1100px, 92vw);
+  --sectionPad: 90px;
+  --sectionPadMobile: 56px;
+  --heroTopPad: 44px;
+  --heroBottomPad: 18px;
+}
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI,
+    Roboto, Arial, Helvetica, sans-serif;
+}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  overflow-x:hidden;
+}
+
+/*
+  === Brand text animation ===
+  The project name uses a flowing gradient and glitch pulse
+  animation to reinforce the futuristic theme.  A drop shadow
+  adds separation from the background.
+*/
+.brandLogoText {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #00e5ff, #00a8cc, #00e5ff);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradientFlow 3s ease infinite,
+             glitchPulse 2.5s ease-in-out infinite;
+  filter: drop-shadow(0 0 8px rgba(0,229,255,.4));
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+@keyframes gradientFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes glitchPulse {
+  0%, 100% { 
+    text-shadow: 
+      0 0 10px rgba(0,229,255,.6),
+      0 0 20px rgba(0,229,255,.3);
+    filter: drop-shadow(0 0 8px rgba(0,229,255,.4));
+  }
+  50% { 
+    text-shadow: 
+      0 0 20px rgba(0,229,255,.8),
+      0 0 30px rgba(0,229,255,.5);
+    filter: drop-shadow(0 0 12px rgba(0,229,255,.6));
+  }
+}
+
+.brandGlow{
+  color:var(--accent);
+  text-shadow:
+    0 0 6px rgba(0,229,255,.55),
+    0 0 16px rgba(0,229,255,.35);
+  animation: glowPulse 4s ease-in-out infinite;
+}
+
+@keyframes glowPulse{
+  0%,100%{opacity:1}
+  50%{opacity:.75}
+}
+
+.heroBrand{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  margin-bottom:16px;
+}
+
+.heroBrandImg{
+  width:44px;
+  height:44px;
+  border-radius:12px;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(0,229,255,.85), rgba(0,229,255,.15) 55%, rgba(255,255,255,.06) 70%),
+    linear-gradient(135deg, rgba(0,229,255,.25), rgba(255,255,255,.02));
+  border:1px solid rgba(0,229,255,.35);
+  box-shadow: 0 0 16px rgba(0,229,255,.12);
+  flex:0 0 auto;
+  animation: heroBrandGlow 3s ease-in-out infinite;
+}
+
+@keyframes heroBrandGlow {
+  0%, 100% { box-shadow: 0 0 16px rgba(0,229,255,.12); }
+  50% { box-shadow: 0 0 24px rgba(0,229,255,.24); }
+}
+
+/*
+  Babylon canvas: fixed full-screen background with negative
+  z-index so content appears above it.  The veil overlay adds
+  additional depth and improves readability.
+*/
+#renderCanvas{
+  position:fixed;
+  inset:0;
+  width:100%;
+  height:100%;
+  z-index:-2;
+  display:block;
+}
+
+.veil{
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  background:
+    radial-gradient(1200px 700px at 20% 10%, rgba(0,229,255,.12), transparent 55%),
+    radial-gradient(900px 650px at 80% 25%, rgba(0,229,255,.08), transparent 58%),
+    linear-gradient(to bottom, rgba(0,0,0,.25), rgba(0,0,0,.65));
+  pointer-events:none;
+}
+
+/*
+  Top bar contains the brand, navigation and call to action.  It
+  uses a sticky position so it remains visible while scrolling.
+*/
+.topbar{
+  position:sticky;
+  top:0;
+  z-index:10;
+  backdrop-filter: blur(10px);
+  background: linear-gradient(to bottom, rgba(5,7,10,.78), rgba(5,7,10,.35));
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+
+.topbar .inner{
+  width:var(--container);
+  margin:0 auto;
+  padding:12px 0;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  flex-wrap: wrap;
+}
+
+.hamburger{
+  display: none;
+  flex-direction: column;
+  background: none;
+  border: none;
+  cursor: pointer;
+  gap: 4px;
+  padding: 4px;
+  order: -1;
+}
+
+.hamburger span{
+  width: 22px;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 1px;
+  transition: all .3s ease;
+}
+
+.hamburger.active span:nth-child(1){
+  transform: rotate(45deg) translate(8px, 8px);
+}
+
+.hamburger.active span:nth-child(2){
+  opacity: 0;
+}
+
+.hamburger.active span:nth-child(3){
+  transform: rotate(-45deg) translate(7px, -7px);
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  min-width: 0;
+  flex: 1;
+  justify-content: center;
+}
+
+.nav-right{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  width: 100%;
+  order: 3;
+}
+
+.brand .name{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+  min-width: 0;
+}
+
+.brand .name strong{
+  font-size:11px;
+  letter-spacing:.4px;
+  text-transform:uppercase;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.brand .name span{
+  font-size:12px;
+  color:var(--muted);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.nav{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+
+.nav a{
+  color:var(--muted);
+  text-decoration:none;
+  font-size:13px;
+  padding:8px 10px;
+  border-radius:12px;
+  border:1px solid transparent;
+  transition: .2s ease;
+}
+
+.nav a:hover{
+  color:var(--text);
+  border-color: rgba(255,255,255,.10);
+  background: rgba(255,255,255,.04);
+}
+
+.cta{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 12px;
+  border-radius:10px;
+  border:1px solid rgba(0,229,255,.35);
+  background: linear-gradient(135deg, rgba(0,229,255,.18), rgba(255,255,255,.04));
+  color:var(--text);
+  text-decoration:none;
+  font-size:12px;
+  box-shadow: 0 0 20px rgba(0,229,255,.08);
+  transition: .2s ease;
+  white-space:nowrap;
+}
+
+.cta:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 0 38px rgba(0,229,255,.14);
+}
+
+/*
+  Section spacing and container wrapper.  The container centers
+  content and constrains width.
+*/
+section{
+  width:100%;
+  padding: var(--sectionPad) 0;
+}
+
+.container{
+  width:var(--container);
+  margin:0 auto;
+}
+
+/*
+  Hero section: large call‑out with tag line, description and
+  action buttons.  Cards use glassy panels with light borders and
+  subtle backgrounds.  The hero grid splits content into text and
+  stats.  The before pseudo element draws accent radial
+  gradients.
+*/
+.hero{
+  padding-top: var(--heroTopPad);
+  padding-bottom: var(--heroBottomPad);
+}
+
+.heroGrid{
+  display:grid;
+  grid-template-columns: 1.15fr .85fr;
+  gap: 26px;
+  align-items:center;
+}
+
+.heroCard{
+  background: var(--panel);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 34px;
+  overflow:hidden;
+  position:relative;
+}
+
+.heroCard::before{
+  content:"";
+  position:absolute;
+  inset:-2px;
+  background:
+    radial-gradient(700px 260px at 10% 10%, rgba(0,229,255,.22), transparent 60%),
+    radial-gradient(520px 220px at 85% 35%, rgba(0,229,255,.12), transparent 65%);
+  opacity:.9;
+  pointer-events:none;
+  z-index:0;
+}
+
+.heroCard > *{
+  position:relative;
+  z-index:1;
+}
+
+.tag{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 12px;
+  border-radius:999px;
+  border:1px solid rgba(0,229,255,.28);
+  background: rgba(0,229,255,.08);
+  color:var(--text);
+  font-size:12px;
+  letter-spacing:.4px;
+  margin-bottom: 14px;
+  width: fit-content;
+}
+
+.hero h1{
+  font-size: 40px;
+  line-height: 1.08;
+  letter-spacing: .3px;
+  margin-bottom: 12px;
+}
+
+.hero p{
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 18px;
+  max-width: 60ch;
+}
+
+.heroActions{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-top: 10px;
+}
+
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  padding:12px 14px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.05);
+  color:var(--text);
+  text-decoration:none;
+  font-size:13px;
+  transition:.2s ease;
+}
+
+.btn:hover{
+  transform:translateY(-1px);
+  background: rgba(255,255,255,.07);
+}
+
+.btnPrimary{
+  border-color: rgba(0,229,255,.35);
+  background: linear-gradient(135deg, rgba(0,229,255,.22), rgba(255,255,255,.03));
+  box-shadow: 0 0 26px rgba(0,229,255,.10);
+}
+
+.btnLogin{
+  border-color: rgba(0,229,255,.35);
+  background: linear-gradient(135deg, rgba(0,229,255,.18), rgba(255,255,255,.02));
+  color: var(--accent);
+  text-shadow: 0 0 8px rgba(0,229,255,.4);
+  transition: all .2s ease;
+}
+
+.btnLogin:hover{
+  background: linear-gradient(135deg, rgba(0,229,255,.25), rgba(255,255,255,.04));
+  box-shadow: 0 0 16px rgba(0,229,255,.2);
+  transform: translateY(-2px);
+}
+
+.btnLogin:active{
+  transform: translateY(0);
+}
+
+/*
+  Stats card lists highlights with a subtle animated background.  The
+  before element draws gradients that move slowly over time.
+*/
+.statsCard{
+  background: rgba(8,10,14,.62);
+  border:1px solid rgba(255,255,255,.07);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 22px;
+  display:grid;
+  gap: 14px;
+  overflow:hidden;
+  position:relative;
+}
+
+.statsCard::before{
+  content:"";
+  position:absolute;
+  inset:-1px;
+  background:
+    linear-gradient(90deg, rgba(0,229,255,.18), transparent 60%),
+    radial-gradient(480px 220px at 60% 20%, rgba(0,229,255,.10), transparent 60%);
+  opacity:.8;
+  pointer-events:none;
+}
+
+.statsCard > *{
+  position:relative;
+  z-index:1;
+}
+
+.statRow{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  padding: 12px 12px;
+  border-radius: 14px;
+  border:1px solid rgba(255,255,255,.06);
+  background: rgba(255,255,255,.03);
+}
+
+.statRow strong{
+  font-size: 13px;
+  letter-spacing: .4px;
+}
+
+.statRow span{
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.badge{
+  font-size:12px;
+  color: rgba(255,255,255,.92);
+  border:1px solid rgba(0,229,255,.25);
+  background: rgba(0,229,255,.06);
+  padding:6px 10px;
+  border-radius: 999px;
+  white-space:nowrap;
+}
+
+/*
+  About and Why sections use side by side panels on large
+  screens.  Lists are styled with coloured dots and flexible
+  spacing.
+*/
+.panel{
+  background: var(--panel);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 28px;
+}
+
+.split{
+  display:grid;
+  grid-template-columns: 1.05fr .95fr;
+  gap: 18px;
+  align-items:start;
+}
+
+h2{
+  font-size: 24px;
+  letter-spacing:.2px;
+  margin-bottom: 10px;
+}
+
+.lead{
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.list{
+  margin-top: 14px;
+  display:grid;
+  gap: 10px;
+}
+
+.li{
+  display:flex;
+  gap: 12px;
+  align-items:flex-start;
+  padding: 12px 12px;
+  border-radius: 14px;
+  border:1px solid rgba(255,255,255,.06);
+  background: rgba(255,255,255,.03);
+}
+
+.dot{
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  margin-top: 6px;
+  background: rgba(0,229,255,.75);
+  box-shadow: 0 0 16px rgba(0,229,255,.35);
+  flex:0 0 auto;
+}
+
+.li b{
+  font-size: 13px;
+}
+
+.li p{
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.55;
+  margin-top: 4px;
+}
+
+/*
+  Offers grid showcases different services.  Each offer card has
+  subtle hover interactions and optional extras shown on desktop.
+*/
+.offersHeader{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.offersHeader .meta{
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.grid{
+  display:grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.offer{
+  background: rgba(8,10,14,.66);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 10px 34px rgba(0,0,0,.25);
+  position:relative;
+  overflow:hidden;
+  transition: .2s ease;
+}
+
+.offer:hover{
+  transform: translateY(-2px);
+  border-color: rgba(0,229,255,.20);
+  box-shadow: 0 14px 40px rgba(0,0,0,.35);
+}
+
+.offer::before{
+  content:"";
+  position:absolute;
+  inset:-1px;
+  background: radial-gradient(420px 220px at 20% 10%, rgba(0,229,255,.16), transparent 60%);
+  opacity:.85;
+  pointer-events:none;
+}
+
+.offer > *{
+  position:relative;
+  z-index:1;
+}
+
+.offerTop{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.offerNum{
+  font-size: 12px;
+  color: rgba(255,255,255,.78);
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.04);
+  padding: 6px 10px;
+  border-radius: 999px;
+  white-space:nowrap;
+}
+
+.offer h3{
+  font-size: 14px;
+  letter-spacing: .2px;
+  margin-bottom: 6px;
+}
+
+.offer p{
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.mini{
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed rgba(255,255,255,.10);
+  display:grid;
+  gap: 6px;
+}
+
+.mini span{
+  font-size: 12px;
+  color: rgba(255,255,255,.78);
+}
+
+/*
+  Footer.  A compact call to action and copyright text.
+*/
+.footer{
+  padding: 48px 0 56px;
+  color: rgba(255,255,255,.70);
+}
+
+.footerBox{
+  background: rgba(8,10,14,.62);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: var(--radius);
+  padding: 20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 16px;
+  box-shadow: var(--shadow);
+}
+
+.footerBox small{
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.footerBox .cta{
+  padding:10px 12px;
+}
+
+/*
+  Media queries:
+  - 980px: switch to single-column grids.
+  - 768px: mobile tuning with scaled typography and hidden
+    navigation.  Additional rules for text prioritization ensure
+    only essential information is visible on small screens.
+*/
+@media (max-width: 980px){
+  .heroGrid{grid-template-columns: 1fr;}
+  .split{grid-template-columns: 1fr;}
+  .grid{grid-template-columns: repeat(2, minmax(0, 1fr));}
+}
+
+@media (max-width: 768px){
+  section{padding: var(--sectionPadMobile) 0;}
+  .topbar .inner{
+    padding: 10px 0;
+    gap: 10px;
+    justify-content: flex-start;
+  }
+  .hamburger{
+    display: flex;
+  }
+  .brand{
+    flex: 1;
+    gap: 8px;
+    min-width: 0;
+  }
+  .brandLogoText{
+    font-size: 16px;
+    letter-spacing: 1.5px;
+    white-space: nowrap;
+  }
+  .brand .name{
+    display: none;
+  }
+  .nav-right{
+    display: none;
+    flex-direction: column;
+    width: calc(100% + 16px);
+    margin-left: -8px;
+    margin-right: -8px;
+    padding: 12px 8px;
+    gap: 8px;
+    background: rgba(8,10,14,.95);
+    border-top: 1px solid rgba(255,255,255,.06);
+    order: 4;
+  }
+  .nav-right.active{
+    display: flex;
+  }
+  .nav{
+    flex-direction: column;
+    width: 100%;
+    gap: 8px;
+  }
+  .nav a{
+    font-size: 12px;
+    padding: 8px 12px;
+    width: 100%;
+    text-align: left;
+  }
+  .dropdown{
+    width: 100%;
+  }
+  .dropdown summary{
+    font-size: 12px;
+    padding: 8px 12px;
+    width: 100%;
+    text-align: left;
+  }
+  .dropdown-menu{
+    position: static;
+    border: 1px solid rgba(255,255,255,.06);
+    background: rgba(255,255,255,.03);
+    margin-top: 4px;
+  }
+  .dropdown-menu li a{
+    font-size: 11px;
+    padding: 6px 12px;
+  }
+  .btnLogin{
+    width: 100%;
+    font-size: 12px;
+    padding: 10px 14px;
+  }
+  .cta{
+    /* Mobile CTA: reduced padding and font size with fixed width */
+    padding: 4px 8px;
+    font-size: 9px;
+    flex-shrink: 0;
+    width: 70px;
+    overflow: hidden;
+    color: transparent;
+    position: relative;
+    /* Align the top bar CTA to the right on mobile */
+    margin-left: auto;
+  }
+  .cta::before{
+    content: "Services";
+    color: var(--text);
+    position: absolute;
+    left: 8px;
+    /* Ensure pseudo-text scales with mobile CTA */
+    font-size: 9px;
+  }
+
+  /* Preserve normal sizing for the Back to top button in the footer on mobile */
+  .footerBox .cta{
+    width: auto;
+    margin-left: 0;
+  }
+  .hero{
+    padding-top: 28px;
+    padding-bottom: 10px;
+  }
+  header{min-height:auto;}
+  .heroCard{padding: 22px;}
+  /* Base font sizes in the hero are lowered for mobile */
+  .hero h1{font-size: 26px;}
+  .hero p{font-size: 13px;}
+  .tag{
+    font-size: 11px;
+    padding: 7px 10px;
+  }
+  .statsCard{padding: 16px;}
+  .statRow{padding: 10px 10px;}
+  .grid{grid-template-columns: 1fr;}
+  .offer{padding: 16px;}
+  h2{font-size: 20px;}
+  .lead{font-size: 13px;}
+  .li b{font-size: 13px;}
+  .li p{font-size: 12.5px;}
+  .footerBox{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+  /*
+    Mobile text prioritization: hide or clamp long text
+    elements.  The aim is to reduce scrolling by showing only
+    the most important content on small screens.  Additional
+    clamping is applied to hero headlines, paragraphs, stats and
+    offers.
+  */
+  .hero h1{
+    /* dynamic sizing with clamp for smoother scaling */
+    font-size: clamp(22px, 6vw, 26px);
+    line-height: 1.15;
+  }
+  .hero p{
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .statRow span{display:none;}
+  #about .lead{
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  #why .li p{display:none;}
+  .offer p{
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .offer .mini{display:none;}
+  .footerBox strong{font-size: 13px;}
+  .footerBox small{font-size: 11px;}
+  /* Tagline size reduction for mobile */
+  .brand .name strong{
+    font-size: 8px;
+    letter-spacing: .3px;
+  }
+}
+
+/*
+  Respect users’ reduced motion preferences by disabling
+  animations when requested.  This ensures accessibility for
+  motion-sensitive users.
+*/
+@media (prefers-reduced-motion: reduce){
+  .offer,
+  .btn,
+  .cta,
+  .brandLogoText,
+  .heroBrandImg{
+    animation: none !important;
+    transition:none !important;
+  }
+}
+
+/*
+  Dropdown menu styling
+  The Services button is now a details element with a summary and a menu.  The
+  summary inherits the CTA styling and includes a small arrow.  When the
+  details element is open, the menu becomes visible.
+*/
+.dropdown {
+  position: relative;
+  width: 100%;
+}
+
+.dropdown summary {
+  list-style: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 10px;
+  border: 1px solid rgba(0,229,255,.35);
+  background: linear-gradient(135deg, rgba(0,229,255,.18), rgba(255,255,255,.04));
+  color: var(--text);
+  padding: 8px 12px;
+  box-shadow: 0 0 20px rgba(0,229,255,.08);
+  transition: all .2s ease;
+  white-space: nowrap;
+}
+
+.dropdown summary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 38px rgba(0,229,255,.14);
+  border-color: rgba(0,229,255,.55);
+  background: linear-gradient(135deg, rgba(0,229,255,.25), rgba(255,255,255,.06));
+}
+
+.dropdown summary::-webkit-details-marker {
+  display: none;
+}
+
+.dropdown summary .arrow {
+  font-size: 10px;
+  transition: transform .3s ease;
+}
+
+.dropdown[open] summary .arrow {
+  transform: rotate(180deg);
+}
+
+.dropdown-menu {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 8px);
+  background: rgba(8,10,14,.98);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(0,229,255,.25);
+  border-radius: 14px;
+  box-shadow: 
+    0 20px 50px rgba(0,0,0,.5),
+    0 0 30px rgba(0,229,255,.1);
+  padding: 12px 0;
+  display: none;
+  z-index: 20;
+  min-width: 220px;
+  max-height: 400px;
+  overflow-y: auto;
+  animation: slideDown .3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdown[open] .dropdown-menu {
+  display: block;
+}
+
+.dropdown-menu li {
+  list-style: none;
+}
+
+.dropdown-menu li:not(.menu-heading) a {
+  display: block;
+  padding: 10px 18px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 13px;
+  transition: all .15s ease;
+  position: relative;
+}
+
+.dropdown-menu li:not(.menu-heading) a:hover {
+  color: var(--accent);
+  background: rgba(0,229,255,.08);
+  padding-left: 22px;
+}
+
+/* Menu headings inside the dropdown, used to label groups of links */
+/*
+  Section headings inside the dropdown menu.  These labels help separate
+  groups of links and stand out with a cyan accent and divider line.
+*/
+.menu-heading {
+  padding: 10px 18px;
+  font-size: 10px;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: .7px;
+  font-weight: 700;
+  border-top: 1px solid rgba(0,229,255,.15);
+  border-bottom: 1px solid rgba(0,229,255,.1);
+  margin: 4px 8px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
